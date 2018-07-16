@@ -1,11 +1,13 @@
 import UIKit
 
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
-    guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
-    filter.setValue(string.data(using: String.Encoding.ascii), forKey: "inputMessage")
-    guard let image = filter.outputImage else { return nil }
-    let transform = scaleTransform(from: image.extent.size, to: requestedSize)
-    return UIImage(ciImage: image.transformed(by: transform))
+    return CIFilter(name: "CIQRCodeGenerator").flatMap {
+        $0.setValue(string.data(using: String.Encoding.ascii), forKey: "inputMessage")
+        return $0.outputImage.map {
+            let transform = scaleTransform(from: $0.extent.size, to: requestedSize)
+            return UIImage(ciImage: $0.transformed(by: transform))
+        }
+    }
 }
 
 func scaleTransform(from originalSize: CGSize,
