@@ -11,8 +11,19 @@ func <*><A, B>(_ arg: A?, transform: (A) -> B) -> B? {
     return arg.map(transform)
 }
 
+precedencegroup BindingPrecedence {
+    associativity: left
+    higherThan: ApplicativePrecedence
+}
+
+infix operator ??=: BindingPrecedence
+
+func ??=<A, B>(_ arg: A?, transform: (A) -> B?) -> B? {
+    return arg.flatMap(transform)
+}
+
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
-    return CIFilter(name: "CIQRCodeGenerator").flatMap {
+    return CIFilter(name: "CIQRCodeGenerator") ??= {
         codeImage(from: string, filter: $0) <*> { image(form: $0, scaledTo: requestedSize) }
     }
 }
