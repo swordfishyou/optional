@@ -1,5 +1,11 @@
 import UIKit
 
+extension Optional {
+    func flatten<U>() -> U? where Wrapped == U? {
+        return self.flatMap { $0.flatMap { $0 } }
+    }
+}
+
 precedencegroup ApplicativePrecedence {
     associativity: left
     higherThan: NilCoalescingPrecedence
@@ -7,8 +13,8 @@ precedencegroup ApplicativePrecedence {
 
 infix operator <*>: ApplicativePrecedence
 
-func <*><A, B>(_ arg: A?, transform: (A) -> B) -> B? {
-    return arg.map(transform)
+func <*><A, B>(_ arg: A?, transform: ((A) -> B)?) -> B? {
+    return arg.map { value in transform.map { $0(value) } }?.flatten()
 }
 
 precedencegroup BindingPrecedence {
@@ -18,18 +24,18 @@ precedencegroup BindingPrecedence {
 
 infix operator ??=: BindingPrecedence
 
-func ??=<A, B>(_ arg: A?, transform: (A) -> B?) -> B? {
-    return arg.flatMap(transform)
+func ??=<A, B>(_ arg: A?, transform: ((A) -> B?)?) -> B? {
+    return arg.flatMap { value in transform.flatMap { $0(value) } }
 }
-
 func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
     return { argA in { argB in function(argA, argB) } }
 }
 
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
-    return (CIFilter(name: "CIQRCodeGenerator")
+    return requestedSize <*>
+        (CIFilter(name: "CIQRCodeGenerator")
         ??= curry(codeImage)(string)
-        <*> curry(image))?(requestedSize)
+        <*> curry(image))
 }
 
 func codeImage(from string: String,
