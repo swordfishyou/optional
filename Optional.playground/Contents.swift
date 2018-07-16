@@ -1,9 +1,19 @@
 import UIKit
 
+precedencegroup ApplicativePrecedence {
+    associativity: left
+    higherThan: NilCoalescingPrecedence
+}
+
+infix operator <*>: ApplicativePrecedence
+
+func <*><A, B>(_ arg: A?, transform: (A) -> B) -> B? {
+    return arg.map(transform)
+}
+
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
     return CIFilter(name: "CIQRCodeGenerator").flatMap {
-        codeImage(from: string, filter: $0)
-            .map { image(form: $0, scaledTo: requestedSize) }
+        codeImage(from: string, filter: $0) <*> { image(form: $0, scaledTo: requestedSize) }
     }
 }
 
