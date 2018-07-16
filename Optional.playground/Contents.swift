@@ -22,10 +22,14 @@ func ??=<A, B>(_ arg: A?, transform: (A) -> B?) -> B? {
     return arg.flatMap(transform)
 }
 
+func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
+    return { argA in { argB in function(argA, argB) } }
+}
+
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
-    return CIFilter(name: "CIQRCodeGenerator") ??= {
-        codeImage(from: string, filter: $0) <*> { image(form: $0, scaledTo: requestedSize) }
-    }
+    return (CIFilter(name: "CIQRCodeGenerator")
+        ??= curry(codeImage)(string)
+        <*> curry(image))?(requestedSize)
 }
 
 func codeImage(from string: String,
