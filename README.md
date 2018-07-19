@@ -9,7 +9,7 @@ Swift's _optional binding_ and common usage often preferable for clarity and sty
 `guard let` and `if let` force you to unwrap the box and handle the absence of a value. Moreover, so called _optional binding_ is implemented as conditional statement, so it breaks control flow.
 
 ## Implementation
-`Optional` provides a handful interface for applying functions to such values in a _pipeline_. Using default functions `map` and `flatMap` one can implement robust DSL of just two operators: `<*>` aka _map_ and `??=` aka _bind_. We also introduce _currying_ in order to apply functions with multiple arguments as well as default operators to values wrapped into `Optional`.
+`Optional` provides a handful interface for applying functions to such values in a _pipeline_. Using default functions `map` and `flatMap` one can implement robust DSL of just two operators: `<*>` aka _apply_ and `??=` aka _bind_. We also introduce _currying_ in order to apply functions with multiple arguments as well as default operators to values wrapped into `Optional`.
 
 ### `curry`
 Default implementation curries a function of two arguments, but it's not a problem to extend it further
@@ -18,7 +18,7 @@ func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
     return { argA in { argB in function(argA, argB) } }
 }
 ```
-### `<*>`
+### `apply`
 Syntax and notation is based on Haskell's `Applicative` type providing the same operator. So type's name is used for operator's `precedencegroup` 
 ```swift
 precedencegroup ApplicativePrecedence {
