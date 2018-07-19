@@ -18,7 +18,7 @@ func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
     return { argA in { argB in function(argA, argB) } }
 }
 ```
-### `apply`
+### apply
 Syntax and notation is based on Haskell's `Applicative` type providing the same operator. So type's name is used for operator's `precedencegroup` 
 ```swift
 precedencegroup ApplicativePrecedence {
