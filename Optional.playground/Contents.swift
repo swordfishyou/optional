@@ -1,9 +1,7 @@
 import UIKit
 
-extension Optional {
-    func flatten<U>() -> U? where Wrapped == U? {
-        return self.flatMap { $0.flatMap { $0 } }
-    }
+func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
+    return { argA in { argB in function(argA, argB) } }
 }
 
 precedencegroup ApplicativePrecedence {
@@ -12,9 +10,8 @@ precedencegroup ApplicativePrecedence {
 }
 
 infix operator <*>: ApplicativePrecedence
-
-func <*><A, B>(_ arg: A?, transform: ((A) -> B)?) -> B? {
-    return arg.map { value in transform.map { $0(value) } }?.flatten()
+func <*><A, B>(_ transform: ((A) -> B)?, arg: A?) -> B? {
+    return transform.flatMap { arg.map($0) }
 }
 
 precedencegroup BindingPrecedence {
@@ -23,23 +20,16 @@ precedencegroup BindingPrecedence {
 }
 
 infix operator ??=: BindingPrecedence
-
-func ??=<A, B>(_ arg: A?, transform: ((A) -> B?)?) -> B? {
-    return arg.flatMap { value in transform.flatMap { $0(value) } }
-}
-func curry<A, B, C>(_ function: @escaping (A, B) -> C) -> (A) -> (B) -> C {
-    return { argA in { argB in function(argA, argB) } }
+func ??=<A, B>(_ transform: ((A) -> B?)?, arg: A?) -> B? {
+    return transform.flatMap { arg.flatMap($0) }
 }
 
 func generate(from string: String, size requestedSize: CGSize) -> UIImage? {
-    return requestedSize <*>
-        (CIFilter(name: "CIQRCodeGenerator")
-        ??= curry(codeImage)(string)
-        <*> curry(image))
+    return curry(image) <*> curry(codeImage) ??= CIFilter(name: "CIQRCodeGenerator") ??= string <*> requestedSize
 }
 
-func codeImage(from string: String,
-               filter: CIFilter) -> CIImage? {
+func codeImage(from filter: CIFilter,
+               string: String) -> CIImage? {
     filter.setValue(string.data(using: String.Encoding.ascii), forKey: "inputMessage")
     return filter.outputImage
 }
