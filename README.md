@@ -9,7 +9,7 @@ Swift's _optional binding_ and common usage often preferable for clarity and sty
 `guard let` and `if let` force you to unwrap the box and handle the absence of a value. Moreover, so called _optional binding_ is implemented as conditional statement, so it breaks control flow.
 
 ## Implementation
-`Optional` provides a handful interface for applying functions to such values in a _pipeline_. Using default functions `map` and `flatMap` one can implement robust DSL of just two operators: `<*>` aka _apply_ and `??=` aka _bind_. We also introduce _currying_ in order to apply functions with multiple arguments as well as default operators to values wrapped into `Optional`.
+`Optional` provides a handful interface for applying functions to such values in a _pipeline_. Using default functions `map` and `flatMap` one can implement robust DSL of just three operators: `<*>` aka _apply_, `??=` aka _bind_ and `<?>` aka _map_. We also introduce _currying_ in order to apply functions with multiple arguments as well as default operators to values wrapped into `Optional`.
 
 ### `curry`
 Default implementation curries a function of two arguments, but it's not a problem to extend it further
@@ -28,17 +28,15 @@ precedencegroup ApplicativePrecedence {
 ```
 Operator applies any optional function of type `(Wrapped) -> T` to a value wrapped into `Optional`
 ```swift
-func <*><A, B>(_ arg: A?, transform: ((A) -> B)?) -> B? {
-    return arg.map { value in transform.map { $0(value) } }?.flatten()
+func <*><A, B>(_ transform: ((A) -> B)?, arg: A?) -> B? {
+    return transform.flatMap { arg.map($0) }
 }
 ```
-#### `flatten`
-A helper function for `Optional` flattens the value if `Optional` wraps another `Optional`
+### map
+Map, alongside with _apply_ allows us non-optional functions application to multiple optional values. Consider a sum or a product of two optional integers. One can implement extensions, but beautiful and robust solution is using operator in `ApplicativePrecedence` group:
 ```swift
-extension Optional {
-    func flatten<U>() -> U? where Wrapped == U? {
-        return self.flatMap { $0.flatMap { $0 } }
-    }
+func <?><A, B>(_ function: (A) -> B, arg: A?) -> B? {
+    return arg.map(function)
 }
 ```
 ### bind
@@ -54,11 +52,12 @@ precedencegroup BindingPrecedence {
 
 _bind_ operator applies optional function of type `(Wrapped) -> T?` to optional value, so it binds one `Optional` to another.
 ```swift
-func ??=<A, B>(_ arg: A?, transform: ((A) -> B?)?) -> B? {
-    return arg.flatMap { value in transform.flatMap { $0(value) } }
+func ??=<A, B>(_ transform: ((A) -> B?)?, arg: A?) -> B? {
+    return transform.flatMap { arg.flatMap($0) }
 }
 ```
-## Further steps
-There is one main concern here: why do we apply optional functions in our operators? The answer is pretty simple: since operators perform partial application of a curried function, resulting function is `Optional`. In Haskell `Applicative` type provides `pure` function that allows user apply functions in a pipeline without thinking of container's context.
 
-Accordingly, next steps are implementing the function like `pure`.
+#### Arguments order
+You may noticed that `precedencegroup`s have left associativity, but function comes as a first argument. This introduces a prefix application of a function like we regulary do but instead of bracers we have an operator: `f(x)` is replaced with `f <?> x`.
+
+If we apply several operators in with the same precedence we can avoid bracers to let compiler understand what do we want.
