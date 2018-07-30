@@ -9,10 +9,20 @@ precedencegroup ApplicativePrecedence {
     higherThan: NilCoalescingPrecedence
 }
 
+infix operator <?>: ApplicativePrecedence
+func <?><A, B>(_ function: (A) -> B, arg: A?) -> B? {
+    return arg.map(function)
+}
+
 infix operator <*>: ApplicativePrecedence
 func <*><A, B>(_ transform: ((A) -> B)?, arg: A?) -> B? {
     return transform.flatMap { arg.map($0) }
 }
+
+let a: Int? = 5
+let b: Int? = 2
+let sum = curry(+) <?> a <*> b
+let product = curry(*) <?> a <*> b
 
 precedencegroup BindingPrecedence {
     associativity: left
