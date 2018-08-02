@@ -10,6 +10,7 @@
 		3264ECFC2112DBB000780DA5 /* m_Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264ECFA2112DBB000780DA5 /* m_Swift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3264ED052112E0CB00780DA5 /* Curry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3264ED042112E0CB00780DA5 /* Curry.swift */; };
 		3264ED072112E0FA00780DA5 /* Applicative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3264ED062112E0FA00780DA5 /* Applicative.swift */; };
+		3264ED0B2112E41E00780DA5 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3264ED0A2112E41E00780DA5 /* Binding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +19,7 @@
 		3264ECFB2112DBB000780DA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3264ED042112E0CB00780DA5 /* Curry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Curry.swift; sourceTree = "<group>"; };
 		3264ED062112E0FA00780DA5 /* Applicative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applicative.swift; sourceTree = "<group>"; };
+		3264ED0A2112E41E00780DA5 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 				3264ECFA2112DBB000780DA5 /* m_Swift.h */,
 				3264ECFB2112DBB000780DA5 /* Info.plist */,
 				3264ED062112E0FA00780DA5 /* Applicative.swift */,
+				3264ED0A2112E41E00780DA5 /* Binding.swift */,
 			);
 			path = "m-Swift";
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			files = (
 				3264ED072112E0FA00780DA5 /* Applicative.swift in Sources */,
 				3264ED052112E0CB00780DA5 /* Curry.swift in Sources */,
+				3264ED0B2112E41E00780DA5 /* Binding.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
