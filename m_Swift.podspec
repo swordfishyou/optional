@@ -6,6 +6,6 @@ Pod::Spec.new do |s|
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author       = { "Tukhtarov Anatoly" => "anvitu@gmail.com" }
   s.platform     = :ios, "8.0"
-  s.source       = { :git => "https://github.com/swordfishyou/optional.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/swordfishyou/optional.git", :tag => "v0.1" }
   s.source_files  = "m-Swift"
 end
